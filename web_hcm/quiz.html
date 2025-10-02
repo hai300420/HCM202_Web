@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tư tưởng Hồ Chí Minh</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        body {
+            background: #f5f7ff;
+            font-family: "Segoe UI", sans-serif;
+            margin: 0;
+        }
+
+        main {
+            display: flex;
+            justify-content: center;
+            height: auto;
+            padding-top: 50px;
+        }
+
+        .quiz-box {
+            background: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+            width: 650px;
+        }
+
+        .quiz-box h2 {
+            text-align: center;
+            color: #3949ab;
+            margin-bottom: 20px;
+        }
+
+        .question {
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .answers button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            background: #e6f0ff;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .answers button:hover {
+            background: #d0e0ff;
+        }
+
+        .answers button.correct {
+            background: #c8f7c5;
+            border-color: #2ecc71;
+        }
+
+        .answers button.wrong {
+            background: #f7c5c5;
+            border-color: #e74c3c;
+        }
+
+        .buttons {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .buttons button {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-prev {
+            background: #eee;
+            color: #666;
+        }
+
+        .btn-hint {
+            background: #ffda6b;
+        }
+
+        .btn-next {
+            background: #90a4ff;
+            color: #fff;
+        }
+
+        .hint,
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .hint {
+            background: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+        }
+
+        .result.correct {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .result.wrong {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo" style="padding-left: 50px;">
+            <a href="index.html"><img src="assets/images/FPT_Logo.png" alt="Logo">
+                <span>HCM202 - SE1725</span></a>
+        </div>
+        <nav style="padding-right: 50px;">
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li><a href="quiz.html" class="active">Quiz</a></li>
+                <li><a href="chatbox.html">Chatbot</a></li>
+                <li><a href="ai-usage.html">AI Usage</a></li>
+                <li><a href="qna.html">Q&A</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Quiz content -->
+    <main>
+        <div class="quiz-box">
+            <h2>Quiz ôn tập lý thuyết</h2>
+            <div class="question" id="question">Câu hỏi sẽ hiện ở đây</div>
+            <div class="answers" id="answers"></div>
+
+            <div class="buttons">
+                <button class="btn-prev" onclick="prevQuestion()">Câu trước</button>
+                <button class="btn-hint" onclick="showHint()">Gợi ý</button>
+                <button class="btn-next" onclick="nextQuestion()">Câu tiếp</button>
+            </div>
+
+            <div id="hint" class="hint" style="display:none;"></div>
+            <div id="result"></div>
+        </div>
+    </main>
+
+
+
+
+    <script src="assets/js/main.js"></script>
+    <script>
+        const questions = [
+            {
+                //  Question 1
+                q: "Theo Luật Phòng, chống tham nhũng năm 2005, tham nhũng được định nghĩa là gì?",
+                options: [
+                    "A. Hành vi lợi dụng mối quan hệ xã hội để mưu cầu lợi ích cá nhân",
+                    "B. Hành vi của người có chức vụ, quyền hạn đã lợi dụng chức vụ, quyền hạn đó vì vụ lợi",
+                    "C. Hành vi làm thất thoát ngân sách nhà nước",
+                    "D. Hành vi quan liêu, cửa quyền"
+                ],
+                correct: 1,
+                hint: "Tham nhũng gắn liền với người có chức vụ, quyền hạn.",
+                explain: "Đáp án đúng: B. Đây là định nghĩa chính thức trong Luật PCTN 2005: lợi dụng chức vụ, quyền hạn vì vụ lợi.",
+                wrongExplain: [
+                    "A: Sai. Đây không phải định nghĩa pháp lý đầy đủ.",
+                    "B: Đúng.",
+                    "C: Sai. Đây là hậu quả chứ không phải định nghĩa.",
+                    "D: Sai. Quan liêu, cửa quyền là biểu hiện lệch lạc nhưng không phải định nghĩa tham nhũng."
+                ],
+                // Save answer
+                chosen: null,
+                hintShown: false
+            },
+            {
+                // Question 2
+                q: "Tư tưởng Hồ Chí Minh về độc lập dân tộc gắn liền với chủ nghĩa xã hội thể hiện điều gì?",
+                options: [
+                    "A. Giải phóng dân tộc chỉ là bước tạm thời",
+                    "B. Độc lập dân tộc phải gắn với tự do, hạnh phúc của nhân dân",
+                    "C. Chủ nghĩa xã hội chỉ cần thiết khi kinh tế đã phát triển",
+                    "D. Độc lập dân tộc không liên quan đến CNXH"
+                ],
+                correct: 1,
+                hint: "Bác luôn nhấn mạnh độc lập dân tộc phải đi đôi với hạnh phúc nhân dân.",
+                explain: "Đáp án đúng: B. Tư tưởng Hồ Chí Minh: Độc lập dân tộc gắn liền với CNXH, mục tiêu cuối cùng là hạnh phúc nhân dân.",
+                wrongExplain: [
+                    "A: Sai. Bác không coi giải phóng dân tộc chỉ là tạm thời.",
+                    "B: Đúng.",
+                    "C: Sai. CNXH không đợi kinh tế phát triển mới cần.",
+                    "D: Sai. Độc lập dân tộc luôn gắn liền với CNXH."
+                ],
+                // Save answer
+                chosen: null,
+                hintShown: false
+            }
+        ];
+
+        let current = 0;
+        loadQuestion();
+
+        function loadQuestion() {
+            const q = questions[current];
+            document.getElementById("question").innerText = `Câu ${current + 1}/${questions.length}: ${q.q}`;
+            const answersDiv = document.getElementById("answers");
+            answersDiv.innerHTML = "";
+
+            q.options.forEach((opt, i) => {
+                const btn = document.createElement("button");
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(i, btn);
+                answersDiv.appendChild(btn);
+
+                // nếu đã chọn thì hiển thị lại trạng thái
+                if (q.chosen !== null) {
+                    btn.disabled = true;
+                    if (i === q.correct) btn.classList.add("correct");
+                    if (i === q.chosen && q.chosen !== q.correct) btn.classList.add("wrong");
+                }
+            });
+
+            // hiển thị gợi ý nếu trước đó đã bật
+            const hintBox = document.getElementById("hint");
+            if (q.hintShown) {
+                hintBox.innerText = "Gợi ý: " + q.hint;
+                hintBox.style.display = "block";
+            } else {
+                hintBox.style.display = "none";
+            }
+
+            // hiển thị kết quả cũ
+            const resultDiv = document.getElementById("result");
+            resultDiv.innerHTML = "";
+            if (q.chosen !== null) {
+                if (q.chosen === q.correct) {
+                    resultDiv.innerHTML = `<div class="result correct"><b>Chính xác!</b><br>${q.explain}</div>`;
+                } else {
+                    resultDiv.innerHTML = `
+                <div class="result wrong"><b>Chưa đúng!</b><br>${q.wrongExplain[q.chosen]}</div>
+                <div class="result correct">${q.explain}</div>`;
+                }
+            }
+
+            // enable/disable nút
+            document.querySelector(".btn-prev").disabled = current === 0;
+            document.querySelector(".btn-next").innerText = current === questions.length - 1 ? "Kết thúc" : "Câu tiếp";
+        }
+
+        function showHint() {
+            const q = questions[current];
+            q.hintShown = true; // lưu lại trạng thái
+            const hintBox = document.getElementById("hint");
+            hintBox.innerText = "Gợi ý: " + q.hint;
+            hintBox.style.display = "block";
+        }
+
+        function checkAnswer(index, btn) {
+            const q = questions[current];
+            q.chosen = index; // lưu đáp án đã chọn
+
+            const buttons = document.querySelectorAll(".answers button");
+            buttons.forEach((b, i) => {
+                b.disabled = true;
+                if (i === q.correct) b.classList.add("correct");
+                if (i === index && i !== q.correct) b.classList.add("wrong");
+            });
+
+            const resultDiv = document.getElementById("result");
+            if (index === q.correct) {
+                resultDiv.innerHTML = `<div class="result correct"><b>Chính xác!</b><br>${q.explain}</div>`;
+            } else {
+                resultDiv.innerHTML = `
+        <div class="result wrong"><b>Chưa đúng!</b><br>${q.wrongExplain[index]}</div>
+        <div class="result correct">${q.explain}</div>`;
+            }
+        }
+
+        function nextQuestion() {
+            if (current < questions.length - 1) {
+                current++;
+                loadQuestion();
+            } else {
+                alert("Bạn đã hoàn thành quiz!");
+            }
+        }
+
+        document.querySelector(".btn-prev").onclick = () => {
+            if (current > 0) {
+                current--;
+                loadQuestion();
+            }
+        };
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tư tưởng Hồ Chí Minh</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* Q&A form */
+        .qa-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .qa-container h2 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        #question {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            resize: none;
+        }
+
+        button[type="submit"] {
+            margin-top: 12px;
+            padding: 10px 20px;
+            background-color: #0078ff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #005ecb;
+        }
+
+        #qa-list {
+            list-style: none;
+            margin-top: 20px;
+            padding: 0;
+        }
+
+        #qa-list li {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 15px;
+        }
+
+        .qa-form input,
+        .qa-form textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border 0.2s;
+        }
+
+        .qa-form input:focus,
+        .qa-form textarea:focus {
+            border-color: #0078ff;
+            outline: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo" style="padding-left: 50px;">
+            <a href="index.html"><img src="assets/images/FPT_Logo.png" alt="Logo">
+                <span>HCM202 - SE1725</span></a>
+        </div>
+        <nav style="padding-right: 50px;">
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li><a href="quiz.html">Quiz</a></li>
+                <li><a href="chatbox.html">Chatbot</a></li>
+                <li><a href="ai-usage.html">AI Usage</a></li>
+                <li><a href="qna.html" class="active">Q&A</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Q&A Section -->
+    <main>
+        <div class="qa-container">
+            <h2>Gửi câu hỏi của bạn</h2>
+            <form id="qa-form">
+                <input type="text" name="name" placeholder="Tên của bạn" required>
+                <textarea id="question" name="message" rows="3" placeholder="Nhập câu hỏi..."></textarea><br>
+                <button type="submit">Gửi</button>
+            </form>
+            <h3 style="padding-top: 10px;">Câu hỏi đã gửi:</h3>
+            <ul id="qa-list"></ul>
+        </div>
+
+
+    </main>
+
+
+
+
+    <script src="assets/js/main.js"></script>
+
+    <!-- EmailJS -->
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+    <script>
+        // Khởi tạo Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBcAGzsu3117IYYwarsOug0u6BGx2KhdKA",
+            authDomain: "questionask.firebaseapp.com",
+            projectId: "questionask",
+            storageBucket: "questionask.appspot.com",
+            messagingSenderId: "1037489286507",
+            appId: "1:1037489286507:web:fd74949428bf413c96f02e",
+            measurementId: "G-S0WLEEWTFP",
+            databaseURL: "https://questionask-default-rtdb.firebaseio.com/"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // Khởi tạo EmailJS
+        (function () {
+            emailjs.init("LN0JIkWeBEfFqoSZY"); // Public Key
+        })();
+
+        const form = document.getElementById("qa-form");
+        const qaList = document.getElementById("qa-list");
+
+        // Xử lý gửi form
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const name = form.name.value.trim();
+            const message = form.message.value.trim();
+            if (!name || !message) {
+                alert("❌ Vui lòng nhập đầy đủ!");
+                return;
+            }
+
+            // 1. Lưu vào Firebase
+            db.ref("questions").push({
+                name: name,
+                message: message,
+                timestamp: Date.now()
+            });
+
+            // 2. Gửi qua EmailJS
+            emailjs.send("service_emboi81", "template_7vk57hg", {
+                name: name,
+                message: message
+            }).then(() => {
+                console.log("📩 Email đã gửi thành công");
+            }).catch(err => {
+                console.error("❌ Lỗi gửi email:", err);
+            });
+
+            form.reset();
+            alert("✅ Câu hỏi đã gửi!");
+        });
+
+        // Hiển thị realtime từ Firebase
+        db.ref("questions").on("child_added", function (snapshot) {
+            const q = snapshot.val();
+            const li = document.createElement("li");
+            li.textContent = q.name + ": " + q.message;
+            qaList.appendChild(li);
+        });
+    </script>
+
+
+
+
+</body>
+
+</html>
